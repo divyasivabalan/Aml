@@ -1,0 +1,20 @@
+from google.colab import files
+uploaded = files.upload()
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+s=pd.read_csv("tweet.csv - Sheet1.csv");
+
+print(s.shape);
+
+print(s.head)
+
+s.isnull().any
+
+s[s['EMOTION'] == 'positive'].head(10)
+s[s['EMOTION'] == 'negative'].head(10)
+s[s['EMOTION'] == 'neutral'].head(10)
+s['EMOTION'].value_counts().plot.bar(color='pink', figsize=(6,4));
+s['EMOTION'].value_counts().plot.hist(color='purple', figsize=(6,4));
+s['EMOTION'].value_counts().plot.line(color='lightgreen', figsize=(6,4));
