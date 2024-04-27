@@ -1,0 +1,148 @@
+#LANGUAGE
+
+import speech_recognition as sr
+import pycld2 as cld2
+def detect_language(audio_file):
+    recognizer = sr.Recognizer()
+    with sr.AudioFile(audio_file) as source:
+        audio_data = recognizer.record(source)
+    try:
+        spoken_text = recognizer.recognize_google(audio_data)
+        _, _, details = cld2.detect(spoken_text)
+        language = details[0][1]
+        return language
+    except sr.UnknownValueError:
+        print("Google Speech Recognition could not understand audio")
+    except sr.RequestError as e:
+        print(f"Could not request results from Google Speech Recognition service; {e}")
+audio_file = "path_to_your_audio_file.wav"
+detected_language = detect_language(audio_file)
+print("Detected language:", detected_language)
+
+#MUSIC
+
+import json
+import numpy as np
+from scipy.io.wavfile import write
+import matplotlib.pyplot as plt
+def synthesizer(freq, duration, amp=1.0, sampling_freq=44100):
+t = np.linspace(0, duration, duration * sampling_freq)
+audio = amp * np.sin(2 * np.pi * freq * t)
+return audio.astype(np.int16)
+if __name__=='__main__':
+tone_map_file = 'tone_freq_map.json'
+with open(tone_map_file, 'r') as f:
+tone_freq_map = json.loads(f.read())
+input_tone = 'G'
+duration = 2 
+amplitude = 10000
+sampling_freq = 44100 # Hz
+synthesized_tone = synthesizer(tone_freq_map[input_tone],duration, amplitude, sampling_freq)
+write('output_tone.wav', sampling_freq, synthesized_tone)
+tone_seq = [('D', 0.3), ('G', 0.6), ('C', 0.5), ('A', 0.3),
+('Asharp', 0.7)]
+output = np.array([])
+for item in tone_seq:
+input_tone = item[0]
+duration = item[1]
+synthesized_tone =synthesizer(tone_freq_map[input_tone], duration, amplitude,sampling_freq)
+output = np.append(output, synthesized_tone, axis=0)
+write('output_tone_seq.wav', sampling_freq, output)
+
+
+#QUESTION
+
+import speech_recognition as sr
+
+def recognize_speech():
+    recognizer = sr.Recognizer()    
+    with sr.Microphone() as source:
+        print("Please ask a question:")
+        audio = recognizer.listen(source) 
+    try:
+        text = recognizer.recognize_google(audio)
+        return text.lower()
+    except sr.UnknownValueError:
+        print("Sorry, I could not understand the audio.")
+        return None
+    except sr.RequestError as e:
+        print("Could not request results from Google Speech Recognition service; {0}".format(e))
+        return None
+def analyze_question(question):
+    if "what" in question:
+        return "Type of question: 'What'"
+    elif "how" in question:
+        return "Type of question: 'How'"
+    elif "why" in question:
+        return "Type of question: 'Why'"
+    elif "when" in question:
+        return "Type of question: 'When'"
+    elif "who" in question:
+        return "Type of question: 'Who'"
+    else:
+        return "Unknown type of question"
+if __name__ == "__main__":
+    question = recognize_speech()
+    if question:
+        print("You asked:", question)
+        question_type = analyze_question(question)
+        print(question_type)
+
+#GOOD WORDS
+
+import speech_recognition as sr
+
+def recognize_speech():
+    recognizer = sr.Recognizer()
+
+    with sr.Microphone() as source:
+        print("Listening...")
+        audio = recognizer.listen(source)
+    try:
+        text = recognizer.recognize_google(audio)
+        return text.lower()
+    except sr.UnknownValueError:
+        return "Sorry, I couldn't understand what you said."
+    except sr.RequestError:
+        return "Sorry, there was an error with the speech recognition service."
+def detect_word(word, text):
+    return word in text
+def main():
+    while True:
+        question = recognize_speech()
+        if "exit" in question:
+            print("Goodbye!")
+            break
+        if detect_word("hello", question):
+            print("Hello there!")
+        elif detect_word("goodbye", question):
+            print("Goodbye!")
+            break
+        elif detect_word("weather", question):
+            print("The weather is nice today.")
+        else:
+            print("I'm sorry, I didn't catch that.")
+if __name__ == "__main__":
+    main()
+
+#SPEECH RECOGINITION
+
+import speech_recognition as sr
+
+recognizer = sr.Recognizer()
+def record_audio():
+    with sr.Microphone() as source:
+        print("Listening...")
+        audio = recognizer.listen(source)
+    return audio
+def recognize_speech(audio):
+    try:
+        text = recognizer.recognize_google(audio)
+        print(f"You said: {text}")
+    except sr.UnknownValueError:
+        print("Sorry, I couldn't understand that.")
+    except sr.RequestError:
+        print("Sorry, there was an error processing your request.")
+if __name__ == "__main__":
+    audio = record_audio()
+    recognize_speech(audio)
